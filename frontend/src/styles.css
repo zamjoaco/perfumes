@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+/*
+ * Tokens neumórficos con tema claro/oscuro.
+ * Las variables --neu-* cambian con [data-theme]; @theme inline las envuelve en utilidades
+ * (bg-neu, text-neuText, shadow-neu, shadow-neu-inset, rounded-neu...) que se resuelven por elemento.
+ *
+ * Regla: el neumorfismo es para SUPERFICIES (cards, inputs, botones secundarios).
+ * Texto siempre en text-neuText (alto contraste) y la acción primaria con bg-accent sólido, una por pantalla.
+ */
+:root {
+  --neu-bg: #e0e5ec;
+  --neu-text: #31456a;
+  --neu-muted: #6b7a99;
+  --neu-dark: #a3b1c6;
+  --neu-light: #ffffff;
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --neu-bg: #2a2d34;
+  --neu-text: #e6e9ef;
+  --neu-muted: #9aa3b5;
+  --neu-dark: #1f2127;
+  --neu-light: #353941;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-neu: var(--neu-bg);
+  --color-neuText: var(--neu-text);
+  --color-neuMuted: var(--neu-muted);
+  --color-neuLight: var(--neu-light);
+  --color-accent: #6d5dfc;
+  --color-danger: #d64545;
+
+  --shadow-neu: 9px 9px 16px var(--neu-dark), -9px -9px 16px var(--neu-light);
+  --shadow-neu-sm: 5px 5px 10px var(--neu-dark), -5px -5px 10px var(--neu-light);
+  --shadow-neu-inset: inset 5px 5px 10px var(--neu-dark), inset -5px -5px 10px var(--neu-light);
+
+  --radius-neu: 1rem;
+}
+
+@layer base {
+  html {
+    background-color: var(--neu-bg);
+  }
+  body {
+    @apply bg-neu text-neuText antialiased min-h-screen;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
+}
+
+@layer components {
+  .neu-table table { @apply w-full text-sm; }
+  .neu-table th { @apply text-left text-xs uppercase tracking-wide text-neuMuted px-4 py-3; }
+  .neu-table td { @apply px-4 py-3 border-t border-neuLight/60; }
+  .neu-table tbody tr:hover { @apply bg-neuLight/30; }
+}

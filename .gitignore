@@ -1,0 +1,21 @@
+.env
+*.log
+
+# backend
+backend/target/
+backend/src/main/resources/static/*
+!backend/src/main/resources/static/.gitkeep
+
+# frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+
+# backups
+backups/
+
+# editores
+.idea/
+*.iml
+.vscode/
+.DS_Store

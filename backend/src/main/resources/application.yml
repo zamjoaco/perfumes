@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: perfumes
+  config:
+    # Spring no lee .env solo: se importa como properties para compartir secretos con docker compose.
+    # Dos rutas porque el working dir puede ser la raíz del repo o backend/.
+    import:
+      - optional:file:.env[.properties]
+      - optional:file:../.env[.properties]
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/perfumes}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:}
+  jpa:
+    hibernate:
+      ddl-auto: validate   # el esquema lo gobierna Flyway, nunca Hibernate
+    open-in-view: false
+  flyway:
+    locations: classpath:db/migration
+  data:
+    web:
+      pageable:
+        serialization-mode: via_dto   # { content, page: { size, number, totalElements, totalPages } }
+  autoconfigure:
+    # AppUser compara el hash por su cuenta; sin esto Boot genera un usuario "user" con password aleatoria.
+    exclude: org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+
+app:
+  admin:
+    username: ${APP_ADMIN_USER:}
+    password: ${APP_ADMIN_PASSWORD:}
+    reset-password: ${APP_ADMIN_RESET_PASSWORD:false}   # true = rehashear al arrancar; volver a false después
+  jwt:
+    secret: ${APP_JWT_SECRET:}
+    expiration: 12h
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: when-authorized
