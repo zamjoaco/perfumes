@@ -4,7 +4,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { ApiError } from '../../../core/error.interceptor';
 import { formError } from '../../../core/form-errors';
-import { NeuButton, NeuCard, NeuInput, NeuSelect, PageHeader } from '../../../shared/ui';
+import { NeuButton, NeuCard, NeuInput, NeuModal, NeuSelect, PageHeader } from '../../../shared/ui';
 import { BrandsService } from '../brands.service';
 import {
   CONCENTRATION_LABELS,
@@ -24,7 +24,7 @@ import { MovementResponse } from '../../stock/models';
 /** Alta y edición en el mismo componente: el modo lo decide `:id` en la ruta. */
 @Component({
   selector: 'app-product-form-page',
-  imports: [ReactiveFormsModule, RouterLink, LucideAngularModule, NeuButton, NeuCard, NeuInput, NeuSelect, PageHeader, StockMovementDialog],
+  imports: [ReactiveFormsModule, RouterLink, LucideAngularModule, NeuButton, NeuCard, NeuInput, NeuModal, NeuSelect, PageHeader, StockMovementDialog],
   template: `
     <page-header [title]="isEdit() ? 'Editar producto' : 'Nuevo producto'">
       <neu-button routerLink="/productos">
@@ -36,84 +36,92 @@ import { MovementResponse } from '../../stock/models';
     @if (notFound()) {
       <neu-card><p class="text-danger" role="alert">Producto no encontrado.</p></neu-card>
     } @else {
-      <form [formGroup]="form" (ngSubmit)="submit()" class="grid gap-6 lg:grid-cols-3">
-        <div class="lg:col-span-2 flex flex-col gap-6">
-          <neu-card>
-            <h2 class="font-semibold mb-4">Identificación</h2>
-            <div class="grid gap-4 sm:grid-cols-2">
+      <form [formGroup]="form" (ngSubmit)="submit()" class="max-w-5xl">
+        <neu-card>
+          <div class="grid gap-x-5 gap-y-4 md:grid-cols-2 lg:grid-cols-3">
+            <div class="lg:col-span-2">
               <neu-input label="Nombre" formControlName="name" [error]="errors.name()" />
-              <neu-input label="SKU" formControlName="sku" placeholder="Ej: SAUV-EDP-100" [error]="errors.sku()" />
+            </div>
+            <neu-input label="SKU" formControlName="sku" placeholder="Ej: SAUV-EDP-100" [error]="errors.sku()" />
 
-              <div class="sm:col-span-2">
-                <div class="flex items-end gap-2">
-                  <div class="flex-1">
-                    <neu-select label="Marca" placeholder="Elegí una marca" [options]="brandOptions()" formControlName="brandId" [error]="errors.brandId()" />
-                  </div>
-                  <neu-button variant="icon" (pressed)="newBrandOpen.set(!newBrandOpen())" aria-label="Nueva marca" title="Nueva marca">
-                    <lucide-icon name="plus" class="w-5 h-5" />
+            <neu-select
+              label="Marca"
+              placeholder="Elegí una marca"
+              emptyLabel="Todavía no hay marcas"
+              actionLabel="Nueva marca"
+              (action)="newBrandOpen.set(true)"
+              [options]="brandOptions()"
+              formControlName="brandId"
+              [error]="errors.brandId()" />
+            <neu-select label="Concentración" placeholder="Elegí" [options]="concentrationOptions" formControlName="concentration" [error]="errors.concentration()" />
+            <neu-input label="Tamaño (ml)" type="number" min="1" formControlName="sizeMl" [error]="errors.sizeMl()" />
+
+            <neu-select label="Presentación" [options]="presentationOptions" formControlName="presentation" />
+            <neu-select label="Género" placeholder="Sin especificar" [options]="genderOptions" formControlName="gender" />
+            <neu-input label="Familia olfativa" formControlName="fragranceFamily" placeholder="Ej: Amaderada" [error]="errors.fragranceFamily()" />
+          </div>
+
+          <div class="grid gap-x-5 gap-y-4 md:grid-cols-2 lg:grid-cols-4 mt-6 pt-5 border-t border-neuLight/60">
+            <neu-input label="Costo (ARS)" type="number" min="0" step="0.01" formControlName="costPrice" [error]="errors.costPrice()" />
+            <neu-input label="Precio de venta (ARS)" type="number" min="0" step="0.01" formControlName="salePrice" [error]="errors.salePrice()" />
+            <neu-input label="Stock mínimo" type="number" min="0" formControlName="minStock" [error]="errors.minStock()" />
+            @if (isEdit()) {
+              <div>
+                <span class="block mb-1 text-sm text-neuMuted">Stock actual</span>
+                <div class="flex items-center gap-3 h-11">
+                  <span class="text-xl font-semibold tabular-nums">{{ product()?.currentStock ?? '–' }}</span>
+                  <neu-button (pressed)="stockOpen.set(true)" [disabled]="!product()">
+                    <lucide-icon name="package-plus" class="w-4 h-4" />
+                    Ajustar
                   </neu-button>
                 </div>
-                @if (newBrandOpen()) {
-                  <div class="flex items-end gap-2 mt-3">
-                    <div class="flex-1">
-                      <neu-input label="Nueva marca" [formControl]="newBrandName" placeholder="Nombre de la marca" [error]="newBrandError()" />
-                    </div>
-                    <neu-button (pressed)="addBrand()" [disabled]="savingBrand()">Agregar</neu-button>
-                  </div>
-                }
               </div>
-
-              <neu-select label="Concentración" placeholder="Elegí" [options]="concentrationOptions" formControlName="concentration" [error]="errors.concentration()" />
-              <neu-input label="Tamaño (ml)" type="number" min="1" formControlName="sizeMl" [error]="errors.sizeMl()" />
-              <neu-select label="Presentación" [options]="presentationOptions" formControlName="presentation" />
-              <neu-select label="Género" placeholder="Sin especificar" [options]="genderOptions" formControlName="gender" />
-              <neu-input label="Familia olfativa" formControlName="fragranceFamily" placeholder="Ej: Amaderada" [error]="errors.fragranceFamily()" />
-            </div>
-          </neu-card>
-
-          <neu-card>
-            <h2 class="font-semibold mb-4">Precios y stock</h2>
-            <div class="grid gap-4 sm:grid-cols-3">
-              <neu-input label="Costo (ARS)" type="number" min="0" step="0.01" formControlName="costPrice" [error]="errors.costPrice()" />
-              <neu-input label="Precio de venta (ARS)" type="number" min="0" step="0.01" formControlName="salePrice" [error]="errors.salePrice()" />
-              <neu-input label="Stock mínimo" type="number" min="0" formControlName="minStock" [error]="errors.minStock()" />
-            </div>
-            @if (isEdit() && product(); as p) {
-              <div class="flex flex-wrap items-center justify-between gap-3 mt-4">
-                <p class="text-sm text-neuMuted">
-                  Stock actual: <span class="font-semibold text-neuText">{{ p.currentStock }}</span>. Se modifica con movimientos, no desde acá.
-                </p>
-                <neu-button (pressed)="stockOpen.set(true)">
-                  <lucide-icon name="package-plus" class="w-4 h-4" />
-                  Movimiento de stock
-                </neu-button>
-              </div>
+            } @else {
+              <neu-input label="Stock inicial" type="number" min="0" formControlName="initialStock" [error]="errors.initialStock()" />
             }
-          </neu-card>
-        </div>
+          </div>
 
-        <div class="flex flex-col gap-4">
-          <neu-card>
-            @if (error()) {
-              <p class="text-sm text-danger mb-4" role="alert">{{ error() }}</p>
-            }
-            <neu-button variant="primary" type="submit" [disabled]="loading()" [block]="true">
-              {{ loading() ? 'Guardando…' : 'Guardar' }}
-            </neu-button>
-            @if (isEdit() && product(); as p) {
-              <div class="mt-4 pt-4 border-t border-neuLight/60">
+          <div class="flex flex-wrap items-center justify-between gap-3 mt-6 pt-5 border-t border-neuLight/60">
+            <div class="text-sm">
+              @if (error()) {
+                <p class="text-danger" role="alert">{{ error() }}</p>
+              } @else if (isEdit() && product(); as p) {
                 @if (p.active) {
-                  <neu-button variant="danger" [block]="true" (pressed)="deactivate()" [disabled]="loading()">Dar de baja</neu-button>
-                  <p class="text-xs text-neuMuted mt-2">No se borra: deja de aparecer en la grilla y no se puede vender.</p>
+                  <p class="text-neuMuted">El stock se mueve con compras, ajustes, ventas y devoluciones, nunca a mano.</p>
                 } @else {
-                  <neu-button [block]="true" (pressed)="activate()" [disabled]="loading()">Reactivar</neu-button>
-                  <p class="text-xs text-neuMuted mt-2">Este producto está dado de baja.</p>
+                  <p class="text-danger">Este producto está dado de baja: no aparece en la grilla ni se puede vender.</p>
                 }
-              </div>
-            }
-          </neu-card>
-        </div>
+              } @else {
+                <p class="text-neuMuted">El stock inicial entra como una compra al costo cargado.</p>
+              }
+            </div>
+            <div class="flex items-center gap-3">
+              @if (isEdit() && product(); as p) {
+                @if (p.active) {
+                  <neu-button variant="danger" (pressed)="deactivate()" [disabled]="loading()">Dar de baja</neu-button>
+                } @else {
+                  <neu-button (pressed)="activate()" [disabled]="loading()">Reactivar</neu-button>
+                }
+              }
+              <neu-button variant="primary" type="submit" [disabled]="loading()">
+                {{ loading() ? 'Guardando…' : 'Guardar' }}
+              </neu-button>
+            </div>
+          </div>
+        </neu-card>
       </form>
+    }
+
+    @if (newBrandOpen()) {
+      <neu-modal title="Nueva marca" maxWidth="24rem" (closed)="closeNewBrand()">
+        <form (ngSubmit)="addBrand()" class="flex flex-col gap-4">
+          <neu-input label="Nombre" [formControl]="newBrandName" placeholder="Ej: Carolina Herrera" [error]="newBrandError()" />
+          <div class="flex justify-end gap-3">
+            <neu-button (pressed)="closeNewBrand()">Cancelar</neu-button>
+            <neu-button variant="primary" type="submit" [disabled]="savingBrand()">{{ savingBrand() ? 'Guardando…' : 'Agregar' }}</neu-button>
+          </div>
+        </form>
+      </neu-modal>
     }
 
     @if (stockOpen() && product(); as p) {
@@ -142,6 +150,7 @@ export class ProductFormPage {
     costPrice: ['', [Validators.required, Validators.min(0)]],
     salePrice: ['', [Validators.required, Validators.min(0)]],
     minStock: ['1', [Validators.required, Validators.min(0)]],
+    initialStock: ['0', Validators.min(0)],
   });
 
   readonly errors = {
@@ -154,6 +163,7 @@ export class ProductFormPage {
     costPrice: formError(this.form.controls.costPrice, { required: 'Ingresá el costo', min: 'No puede ser negativo' }),
     salePrice: formError(this.form.controls.salePrice, { required: 'Ingresá el precio', min: 'No puede ser negativo' }),
     minStock: formError(this.form.controls.minStock, { required: 'Ingresá el mínimo', min: 'No puede ser negativo' }),
+    initialStock: formError(this.form.controls.initialStock, { min: 'No puede ser negativo' }),
   };
 
   readonly concentrationOptions = toOptions(CONCENTRATION_LABELS);
@@ -212,15 +222,20 @@ export class ProductFormPage {
       next: (b) => {
         this.brandList.update((list) => [...list, b].sort((x, y) => x.name.localeCompare(y.name)));
         this.form.controls.brandId.setValue(String(b.id));
-        this.newBrandName.reset();
-        this.newBrandOpen.set(false);
         this.savingBrand.set(false);
+        this.closeNewBrand();
       },
       error: (e: ApiError) => {
         this.newBrandError.set(e.message);
         this.savingBrand.set(false);
       },
     });
+  }
+
+  closeNewBrand(): void {
+    this.newBrandOpen.set(false);
+    this.newBrandName.reset();
+    this.newBrandError.set(null);
   }
 
   deactivate(): void {
@@ -256,7 +271,7 @@ export class ProductFormPage {
 
   private fill(p: ProductResponse): void {
     this.product.set(p);
-    this.form.setValue({
+    this.form.patchValue({
       name: p.name,
       sku: p.sku,
       brandId: String(p.brandId),
@@ -285,6 +300,7 @@ export class ProductFormPage {
       costPrice: Number(v.costPrice).toFixed(2),
       salePrice: Number(v.salePrice).toFixed(2),
       minStock: Number(v.minStock),
+      initialStock: this.id === null ? Number(v.initialStock) || 0 : null,
     };
   }
 }

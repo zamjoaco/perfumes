@@ -57,6 +57,7 @@ export interface ProductRequest {
   costPrice: string; // string: el back lo parsea a BigDecimal, no a double
   salePrice: string;
   minStock: number;
+  initialStock: number | null; // solo al crear; el back lo ignora al editar
 }
 
 export interface ProductSummary {

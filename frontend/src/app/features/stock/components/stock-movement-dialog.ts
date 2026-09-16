@@ -5,7 +5,7 @@ import { ApiError } from '../../../core/error.interceptor';
 import { formError } from '../../../core/form-errors';
 import { NeuButton, NeuInput, NeuModal, NeuSelect } from '../../../shared/ui';
 import { ProductResponse } from '../../products/models';
-import { MANUAL_MOVEMENT_TYPES, MOVEMENT_LABELS, MovementResponse, MovementType } from '../models';
+import { MANUAL_MOVEMENT_TYPES, MOVEMENT_HELP, MOVEMENT_LABELS, MovementResponse, MovementType } from '../models';
 import { StockService } from '../stock.service';
 
 /** Registrar un movimiento y ver el historial de un producto. Se abre desde la grilla y desde el form. */
@@ -13,24 +13,29 @@ import { StockService } from '../stock.service';
   selector: 'stock-movement-dialog',
   imports: [ReactiveFormsModule, CurrencyPipe, DatePipe, NeuModal, NeuButton, NeuInput, NeuSelect],
   template: `
-    <neu-modal [title]="product().name" maxWidth="36rem" (closed)="closed.emit()">
+    <neu-modal [title]="'Stock de ' + product().name" maxWidth="36rem" (closed)="closed.emit()">
       <p class="text-sm text-neuMuted -mt-3 mb-4">
-        {{ product().brand }} · stock actual
+        {{ product().brand }} · hay
         <span class="font-semibold text-neuText">{{ stock() }}</span>
         @if (stock() <= product().minStock) {
-          <span class="text-danger"> (mínimo {{ product().minStock }})</span>
+          <span class="text-danger"> (por debajo del mínimo de {{ product().minStock }})</span>
+        } @else {
+          <span> (mínimo {{ product().minStock }})</span>
         }
       </p>
 
       <div class="flex gap-2 mb-5">
-        <neu-button [active]="tab() === 'movement'" (pressed)="tab.set('movement')">Movimiento</neu-button>
+        <neu-button [active]="tab() === 'movement'" (pressed)="tab.set('movement')">Cargar movimiento</neu-button>
         <neu-button [active]="tab() === 'history'" (pressed)="showHistory()">Historial</neu-button>
       </div>
 
       @if (tab() === 'movement') {
         <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
           <div class="grid gap-4 sm:grid-cols-2">
-            <neu-select label="Tipo" [options]="typeOptions" formControlName="type" />
+            <div class="sm:col-span-2">
+              <neu-select label="¿Qué pasó?" [options]="typeOptions" formControlName="type" />
+              <p class="mt-1 text-xs text-neuMuted">{{ help[typeValue()] }}</p>
+            </div>
             <neu-input
               [label]="isAdjustment() ? 'Cantidad (+ entra, − sale)' : 'Cantidad'"
               type="number"
@@ -50,14 +55,15 @@ import { StockService } from '../stock.service';
           }
           @if (lastSaved(); as m) {
             <p class="text-sm text-emerald-600" role="status">
-              {{ labels[m.type] }} registrada. Stock: {{ m.stockAfter }}.
+              Listo: {{ labels[m.type].toLowerCase() }} de {{ m.quantity > 0 ? '+' : '' }}{{ m.quantity }}.
+              Stock {{ m.stockAfter - m.quantity }} → <span class="font-semibold">{{ m.stockAfter }}</span>.
             </p>
           }
 
           <div class="flex justify-end gap-3 mt-1">
             <neu-button (pressed)="closed.emit()">Cerrar</neu-button>
             <neu-button variant="primary" type="submit" [disabled]="loading()">
-              {{ loading() ? 'Guardando…' : 'Registrar' }}
+              {{ loading() ? 'Guardando…' : 'Registrar movimiento' }}
             </neu-button>
           </div>
         </form>
@@ -109,6 +115,7 @@ export class StockMovementDialog {
   private readonly fb = inject(NonNullableFormBuilder);
 
   readonly labels = MOVEMENT_LABELS;
+  readonly help = MOVEMENT_HELP;
   readonly typeOptions = MANUAL_MOVEMENT_TYPES.map((t) => ({ value: t, label: MOVEMENT_LABELS[t] }));
 
   readonly tab = signal<'movement' | 'history'>('movement');
@@ -125,7 +132,7 @@ export class StockMovementDialog {
     unitCost: [''],
     reason: ['', Validators.maxLength(200)],
   });
-  private readonly typeValue = signal<MovementType>('PURCHASE');
+  readonly typeValue = signal<MovementType>('PURCHASE');
   readonly isAdjustment = computed(() => this.typeValue() === 'ADJUSTMENT');
 
   readonly quantityError = formError(this.form.controls.quantity, {

@@ -3,6 +3,7 @@ import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, Validatio
 import { ApiError } from '../../../core/error.interceptor';
 import { AuthService } from '../../../core/auth.service';
 import { formError } from '../../../core/form-errors';
+import { LucideAngularModule } from 'lucide-angular';
 import { NeuButton, NeuCard, NeuInput, PageHeader } from '../../../shared/ui';
 
 /** Marca `mismatch` en `confirm` cuando no coincide con `newPassword`, sin pisar su `required`. */
@@ -18,11 +19,20 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
 
 @Component({
   selector: 'app-change-password-page',
-  imports: [ReactiveFormsModule, NeuCard, NeuButton, NeuInput, PageHeader],
+  imports: [ReactiveFormsModule, LucideAngularModule, NeuCard, NeuButton, NeuInput, PageHeader],
   template: `
-    <page-header title="Cambiar contraseña" />
-    <div class="max-w-md">
+    <page-header title="Mi cuenta" />
+    <div class="max-w-md mx-auto">
       <neu-card>
+        <div class="flex items-center gap-4 mb-6">
+          <div class="w-12 h-12 rounded-full bg-neu shadow-neu-inset flex items-center justify-center text-accent">
+            <lucide-icon name="key-round" class="w-5 h-5" />
+          </div>
+          <div>
+            <p class="font-semibold">{{ auth.username() }}</p>
+            <p class="text-sm text-neuMuted">Cambiá la contraseña con la que entrás a Pefumes.</p>
+          </div>
+        </div>
         <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
           <neu-input
             label="Contraseña actual"
@@ -60,7 +70,7 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
     </div>`,
 })
 export class ChangePasswordPage {
-  private readonly auth = inject(AuthService);
+  readonly auth = inject(AuthService);
   private readonly fb = inject(NonNullableFormBuilder);
 
   readonly form = this.fb.group(

@@ -9,7 +9,7 @@ import { NeuButton } from '../shared/ui';
   selector: 'app-shell',
   imports: [RouterOutlet, RouterLink, RouterLinkActive, LucideAngularModule, NeuButton],
   template: `
-    <div class="min-h-screen flex">
+    <div class="h-screen flex overflow-hidden">
       <aside class="w-60 shrink-0 p-4 flex flex-col gap-2">
         <a routerLink="/" class="flex items-center gap-3 px-3 py-4 mb-2">
           <img src="logo.svg" alt="" class="w-8 h-8" />
@@ -28,10 +28,10 @@ import { NeuButton } from '../shared/ui';
         }
       </aside>
 
-      <div class="flex-1 flex flex-col min-w-0">
-        <header class="flex items-center justify-end gap-2 px-6 py-4">
+      <div class="flex-1 flex flex-col min-w-0 min-h-0">
+        <header class="flex items-center justify-end gap-2 px-6 py-4 shrink-0">
           <span class="text-sm text-neuMuted mr-2">{{ auth.username() }}</span>
-          <neu-button variant="icon" routerLink="/cambiar-contrasena" aria-label="Cambiar contraseña" title="Cambiar contraseña">
+          <neu-button variant="icon" routerLink="/cambiar-contrasena" aria-label="Mi cuenta" title="Mi cuenta">
             <lucide-icon name="key-round" class="w-5 h-5" />
           </neu-button>
           <neu-button variant="icon" (pressed)="theme.toggle()" [attr.aria-label]="theme.theme() === 'dark' ? 'Modo claro' : 'Modo oscuro'">
@@ -41,7 +41,8 @@ import { NeuButton } from '../shared/ui';
             <lucide-icon name="log-out" class="w-5 h-5" />
           </neu-button>
         </header>
-        <main class="flex-1 px-6 pb-8">
+        <!-- Solo el contenido scrollea; menú y cabecera quedan fijos. -->
+        <main class="flex-1 min-h-0 overflow-y-auto px-6 pb-8">
           <router-outlet />
         </main>
       </div>

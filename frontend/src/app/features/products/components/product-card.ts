@@ -45,11 +45,13 @@ import { CONCENTRATION_LABELS, PRESENTATION_LABELS, ProductResponse } from '../m
         <div class="flex items-center justify-between mt-3 pt-3 border-t border-neuLight/60">
           <span class="text-xs text-neuMuted font-mono">{{ product().sku }}</span>
           <div class="flex gap-2">
-            <neu-button variant="icon" [routerLink]="['/productos', product().id]" aria-label="Editar" title="Editar">
+            <neu-button [routerLink]="['/productos', product().id]" [small]="true">
               <lucide-icon name="pencil" class="w-4 h-4" />
+              Editar
             </neu-button>
-            <neu-button variant="icon" (pressed)="stock.emit(product())" aria-label="Stock" title="Movimiento de stock">
+            <neu-button (pressed)="stock.emit(product())" [small]="true" title="Cargar compra, ajuste, devolución o pérdida">
               <lucide-icon name="package-plus" class="w-4 h-4" />
+              Stock
             </neu-button>
           </div>
         </div>

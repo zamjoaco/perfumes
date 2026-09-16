@@ -25,9 +25,10 @@ import { SalesService } from '../sales.service';
     </page-header>
 
     <div class="grid gap-6 lg:grid-cols-5">
-      <!-- Buscador de productos -->
-      <div class="lg:col-span-3 flex flex-col gap-4">
+      <!-- Buscador de productos: la lista scrollea sola; el carrito queda a la vista. -->
+      <div class="lg:col-span-3 flex flex-col gap-4 lg:max-h-[calc(100vh-10rem)]">
         <neu-input placeholder="Buscar producto por nombre, SKU o marca" [formControl]="query" autocomplete="off" />
+        <div class="lg:overflow-y-auto lg:min-h-0 p-1 -m-1">
         @if (results(); as list) {
           @if (list.length === 0) {
             <neu-card><p class="text-sm text-neuMuted">Sin productos activos con stock para esa búsqueda.</p></neu-card>
@@ -53,10 +54,11 @@ import { SalesService } from '../sales.service';
         } @else {
           <p class="text-sm text-neuMuted">Cargando…</p>
         }
+        </div>
       </div>
 
       <!-- Carrito -->
-      <div class="lg:col-span-2">
+      <div class="lg:col-span-2 lg:sticky lg:top-0 self-start">
         <neu-card>
           <h2 class="font-semibold mb-4">Carrito</h2>
           @if (cart.isEmpty()) {

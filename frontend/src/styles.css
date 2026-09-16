@@ -48,6 +48,16 @@
   body {
     @apply bg-neu text-neuText antialiased min-h-screen;
   }
+  /* Sin flechas en los campos numéricos: mueven decimales sin querer y rompen la estética. */
+  input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+  }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       transition-duration: 0.01ms !important;

@@ -2,6 +2,9 @@ package com.jz.perfumes.product;
 
 import com.jz.perfumes.shared.DomainException;
 import com.jz.perfumes.shared.NotFoundException;
+import com.jz.perfumes.stock.MovementType;
+import com.jz.perfumes.stock.StockMovement;
+import com.jz.perfumes.stock.StockMovementRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +17,8 @@ public class ProductService {
 
     private final ProductRepository products;
     private final BrandRepository brands;
+    // Repositorio de stock y no StockService: StockService depende de este service y sería un ciclo de beans.
+    private final StockMovementRepository movements;
 
     @Transactional(readOnly = true)
     public Page<ProductResponse> search(String q, Long brandId, Boolean active, Boolean belowMinimum, Pageable pageable) {
@@ -31,8 +36,9 @@ public class ProductService {
         return new ProductSummary(products.countByActiveTrue(), products.countActiveBelowMinimum());
     }
 
+    /** El stock inicial entra como movimiento de compra, así el historial arranca en cero y cierra. */
     @Transactional
-    public ProductResponse create(ProductRequest request) {
+    public ProductResponse create(ProductRequest request, Long userId) {
         String sku = Product.normalizeSku(request.sku());
         if (products.existsBySku(sku)) {
             throw new DomainException("Ya existe un producto con el SKU " + sku);
@@ -50,7 +56,12 @@ public class ProductService {
                 .salePrice(request.salePrice())
                 .minStock(request.minStock())
                 .build();
-        return ProductResponse.from(products.save(product));
+        Product saved = products.save(product);
+        if (request.initialStock() != null && request.initialStock() > 0) {
+            movements.save(StockMovement.apply(saved, MovementType.PURCHASE, request.initialStock(),
+                    saved.getCostPrice(), null, "Stock inicial", userId));
+        }
+        return ProductResponse.from(saved);
     }
 
     @Transactional

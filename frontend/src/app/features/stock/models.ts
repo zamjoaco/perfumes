@@ -9,6 +9,15 @@ export const MOVEMENT_LABELS: Record<MovementType, string> = {
   LOSS: 'Pérdida',
 };
 
+/** Qué significa cada tipo, para el diálogo. */
+export const MOVEMENT_HELP: Record<MovementType, string> = {
+  PURCHASE: 'Entra mercadería que compraste. Suma al stock.',
+  SALE: 'La genera una venta. No se carga a mano.',
+  ADJUSTMENT: 'Corregí el stock tras un conteo: cantidad positiva suma, negativa resta.',
+  RETURN: 'Un cliente devolvió un producto. Suma al stock.',
+  LOSS: 'Rotura, vencimiento o faltante. Resta del stock.',
+};
+
 /** Los que se cargan a mano; SALE lo genera la venta. */
 export const MANUAL_MOVEMENT_TYPES: MovementType[] = ['PURCHASE', 'ADJUSTMENT', 'RETURN', 'LOSS'];
 

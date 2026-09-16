@@ -22,5 +22,7 @@ public record ProductRequest(
         @Digits(integer = 10, fraction = 2, message = "hasta 2 decimales") BigDecimal costPrice,
         @NotNull(message = "es obligatorio") @DecimalMin(value = "0", message = "no puede ser negativo")
         @Digits(integer = 10, fraction = 2, message = "hasta 2 decimales") BigDecimal salePrice,
-        @NotNull(message = "es obligatorio") @Min(value = 0, message = "no puede ser negativo") Integer minStock) {
+        @NotNull(message = "es obligatorio") @Min(value = 0, message = "no puede ser negativo") Integer minStock,
+        /** Solo al crear: genera un movimiento de compra al costo del producto. Se ignora al editar. */
+        @Min(value = 0, message = "no puede ser negativo") Integer initialStock) {
 }

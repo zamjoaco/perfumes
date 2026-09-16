@@ -1,5 +1,6 @@
 package com.jz.perfumes.product;
 
+import com.jz.perfumes.auth.AuthenticatedUser;
 import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,8 +48,9 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<ProductResponse> create(@Valid @RequestBody ProductRequest request) {
-        ProductResponse created = productService.create(request);
+    public ResponseEntity<ProductResponse> create(@Valid @RequestBody ProductRequest request,
+                                                  @AuthenticationPrincipal AuthenticatedUser user) {
+        ProductResponse created = productService.create(request, user.id());
         return ResponseEntity.created(URI.create("/api/products/" + created.id())).body(created);
     }
 

@@ -134,6 +134,35 @@ class ProductFlowTest extends IntegrationTest {
     }
 
     @Test
+    void initialStockBecomesAPurchaseMovement() throws Exception {
+        long brandId = diorId;
+        mvc.perform(authed(post("/api/products")).content("""
+                {"sku":"INIT-1","brandId":%d,"name":"Con stock","concentration":"EDT","sizeMl":50,"presentation":"BOTTLE",
+                 "costPrice":"1000","salePrice":"2000","minStock":2,"initialStock":5}
+                """.formatted(brandId)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.currentStock").value(5))
+                .andExpect(jsonPath("$.belowMinimum").value(false));
+        var movement = movements.findAll().get(0);
+        org.assertj.core.api.Assertions.assertThat(movement.getMovementType().name()).isEqualTo("PURCHASE");
+        org.assertj.core.api.Assertions.assertThat(movement.getQuantity()).isEqualTo(5);
+        org.assertj.core.api.Assertions.assertThat(movement.getStockAfter()).isEqualTo(5);
+        org.assertj.core.api.Assertions.assertThat(movement.getUnitCost()).isEqualByComparingTo("1000");
+        org.assertj.core.api.Assertions.assertThat(movement.getReason()).isEqualTo("Stock inicial");
+
+        // sin initialStock (o 0) no hay movimiento
+        mvc.perform(authed(post("/api/products")).content(product("INIT-2", brandId, "Sin stock", 1)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.currentStock").value(0));
+        org.assertj.core.api.Assertions.assertThat(movements.count()).isEqualTo(1);
+        mvc.perform(authed(post("/api/products")).content("""
+                {"sku":"INIT-3","brandId":%d,"name":"Negativo","concentration":"EDT","sizeMl":50,"presentation":"BOTTLE",
+                 "costPrice":"1000","salePrice":"2000","minStock":2,"initialStock":-1}
+                """.formatted(brandId)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void brandsAreListedSortedAndUnique() throws Exception {
         mvc.perform(authed(get("/api/brands")))
                 .andExpect(jsonPath("$[0].name").value("Chanel"))
