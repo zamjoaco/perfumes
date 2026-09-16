@@ -4,6 +4,9 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import {
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
   House,
   KeyRound,
   LUCIDE_ICONS,
@@ -11,8 +14,10 @@ import {
   LucideIconProvider,
   Moon,
   Package,
+  Plus,
   ShoppingCart,
   Sun,
+  TriangleAlert,
 } from 'lucide-angular';
 
 import { routes } from './app.routes';
@@ -31,7 +36,10 @@ export const appConfig: ApplicationConfig = {
     {
       provide: LUCIDE_ICONS,
       multi: true,
-      useValue: new LucideIconProvider({ House, Package, ShoppingCart, Sun, Moon, KeyRound, LogOut }),
+      useValue: new LucideIconProvider({
+        House, Package, ShoppingCart, Sun, Moon, KeyRound, LogOut,
+        Plus, ArrowLeft, ChevronLeft, ChevronRight, TriangleAlert,
+      }),
     },
   ],
 };

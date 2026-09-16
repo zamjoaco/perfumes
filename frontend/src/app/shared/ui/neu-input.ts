@@ -15,6 +15,8 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
         [value]="value()"
         [disabled]="isDisabled()"
         [autocomplete]="autocomplete()"
+        [attr.step]="step()"
+        [attr.min]="min()"
         (input)="onInput($event)"
         (blur)="onTouched()"
         class="w-full h-11 px-4 rounded-neu bg-neu text-neuText shadow-neu-inset outline-none
@@ -30,6 +32,8 @@ export class NeuInput implements ControlValueAccessor {
   placeholder = input('');
   type = input<'text' | 'number' | 'password' | 'email' | 'date'>('text');
   autocomplete = input('off');
+  step = input<string | null>(null);
+  min = input<string | null>(null);
   error = input<string | null>(null);
 
   value = signal('');

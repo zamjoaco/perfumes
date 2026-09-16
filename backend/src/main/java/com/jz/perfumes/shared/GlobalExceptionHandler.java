@@ -2,6 +2,7 @@ package com.jz.perfumes.shared;
 
 import java.time.Clock;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -20,6 +21,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DomainException.class)
     public ResponseEntity<ApiError> domain(DomainException e) {
         return error(HttpStatus.CONFLICT, e.getMessage());
+    }
+
+    /** Unique/FK que no se chequeó antes (p. ej. mismo producto con otra SKU): 409 genérico en vez de 500. */
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiError> integrity(DataIntegrityViolationException e) {
+        return error(HttpStatus.CONFLICT, "Ya existe un registro igual o el dato está en uso");
     }
 
     @ExceptionHandler(BadCredentialsException.class)
