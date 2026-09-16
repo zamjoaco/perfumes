@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
+import { AuthService } from '../core/auth.service';
 import { ThemeService } from '../core/theme.service';
 import { NeuButton } from '../shared/ui';
 
@@ -28,8 +29,15 @@ import { NeuButton } from '../shared/ui';
 
       <div class="flex-1 flex flex-col min-w-0">
         <header class="flex items-center justify-end gap-2 px-6 py-4">
+          <span class="text-sm text-neuMuted mr-2">{{ auth.username() }}</span>
+          <neu-button variant="icon" routerLink="/cambiar-contrasena" aria-label="Cambiar contraseña" title="Cambiar contraseña">
+            <lucide-icon name="key-round" class="w-5 h-5" />
+          </neu-button>
           <neu-button variant="icon" (pressed)="theme.toggle()" [attr.aria-label]="theme.theme() === 'dark' ? 'Modo claro' : 'Modo oscuro'">
             <lucide-icon [name]="theme.theme() === 'dark' ? 'sun' : 'moon'" class="w-5 h-5" />
+          </neu-button>
+          <neu-button variant="icon" (pressed)="logout()" aria-label="Cerrar sesión" title="Cerrar sesión">
+            <lucide-icon name="log-out" class="w-5 h-5" />
           </neu-button>
         </header>
         <main class="flex-1 px-6 pb-8">
@@ -40,9 +48,16 @@ import { NeuButton } from '../shared/ui';
 })
 export class Shell {
   readonly theme = inject(ThemeService);
+  readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
   readonly nav = [
     { path: '/', label: 'Inicio', icon: 'house' },
     { path: '/productos', label: 'Productos', icon: 'package' },
     { path: '/ventas', label: 'Ventas', icon: 'shopping-cart' },
   ];
+
+  logout(): void {
+    this.auth.logout();
+    this.router.navigate(['/login']);
+  }
 }

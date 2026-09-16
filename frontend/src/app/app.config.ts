@@ -3,9 +3,21 @@ import localeEsAr from '@angular/common/locales/es-AR';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { House, LUCIDE_ICONS, LucideIconProvider, Moon, Package, ShoppingCart, Sun } from 'lucide-angular';
+import {
+  House,
+  KeyRound,
+  LUCIDE_ICONS,
+  LogOut,
+  LucideIconProvider,
+  Moon,
+  Package,
+  ShoppingCart,
+  Sun,
+} from 'lucide-angular';
 
 import { routes } from './app.routes';
+import { authInterceptor } from './core/auth.interceptor';
+import { errorInterceptor } from './core/error.interceptor';
 
 registerLocaleData(localeEsAr);
 
@@ -13,8 +25,13 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideHttpClient(withInterceptors([])),
+    // El orden importa: la respuesta la ve primero el ÚLTIMO, así authInterceptor detecta el 401 crudo.
+    provideHttpClient(withInterceptors([errorInterceptor, authInterceptor])),
     { provide: LOCALE_ID, useValue: 'es-AR' },
-    { provide: LUCIDE_ICONS, multi: true, useValue: new LucideIconProvider({ House, Package, ShoppingCart, Sun, Moon }) },
+    {
+      provide: LUCIDE_ICONS,
+      multi: true,
+      useValue: new LucideIconProvider({ House, Package, ShoppingCart, Sun, Moon, KeyRound, LogOut }),
+    },
   ],
 };
