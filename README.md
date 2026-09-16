@@ -9,6 +9,8 @@ El jar sirve el build de Angular: una sola URL, sin nginx.
 
 ## Levantar en casa (producción)
 
+Guía paso a paso desde cero en [docs/levantar-humano.md](docs/levantar-humano.md). Para agentes de IA: [docs/levantar-agente.md](docs/levantar-agente.md).
+
 1. Instalar Docker Desktop.
 2. Copiar `.env.example` a `.env` y completar `DB_PASSWORD`, `APP_ADMIN_PASSWORD` y `APP_JWT_SECRET`.
 3. `docker compose up -d --build`
