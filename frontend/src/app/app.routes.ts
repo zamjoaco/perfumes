@@ -15,6 +15,10 @@ export const routes: Routes = [
         loadChildren: () => import('./features/products/products.routes').then((m) => m.PRODUCTS_ROUTES),
       },
       {
+        path: 'ventas',
+        loadChildren: () => import('./features/sales/sales.routes').then((m) => m.SALES_ROUTES),
+      },
+      {
         path: 'cambiar-contrasena',
         loadComponent: () => import('./features/auth/pages/change-password-page').then((m) => m.ChangePasswordPage),
       },

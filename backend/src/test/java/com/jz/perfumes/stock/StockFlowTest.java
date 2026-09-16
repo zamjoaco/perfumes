@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jz.perfumes.IntegrationTest;
+import com.jz.perfumes.sale.SaleRepository;
 import com.jz.perfumes.auth.AppUserRepository;
 import com.jz.perfumes.product.BrandRepository;
 import com.jz.perfumes.product.ProductRepository;
@@ -28,6 +29,7 @@ class StockFlowTest extends IntegrationTest {
     @Autowired StockMovementRepository movements;
     @Autowired ProductRepository products;
     @Autowired BrandRepository brands;
+    @Autowired SaleRepository sales;
     @Autowired AppUserRepository users;
 
     private String token;
@@ -35,6 +37,7 @@ class StockFlowTest extends IntegrationTest {
 
     @BeforeEach
     void setUp() throws Exception {
+        sales.deleteAll();
         movements.deleteAll();
         products.deleteAll();
         brands.deleteAll();

@@ -12,6 +12,7 @@ import {
   LUCIDE_ICONS,
   LogOut,
   LucideIconProvider,
+  Minus,
   Moon,
   Package,
   PackagePlus,
@@ -20,6 +21,7 @@ import {
   ShoppingCart,
   Sun,
   TriangleAlert,
+  X,
 } from 'lucide-angular';
 
 import { routes } from './app.routes';
@@ -40,7 +42,7 @@ export const appConfig: ApplicationConfig = {
       multi: true,
       useValue: new LucideIconProvider({
         House, Package, ShoppingCart, Sun, Moon, KeyRound, LogOut,
-        Plus, ArrowLeft, ChevronLeft, ChevronRight, TriangleAlert, Pencil, PackagePlus,
+        Plus, ArrowLeft, ChevronLeft, ChevronRight, TriangleAlert, Pencil, PackagePlus, Minus, X,
       }),
     },
   ],
