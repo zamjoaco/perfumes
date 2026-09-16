@@ -18,11 +18,13 @@ import {
   toOptions,
 } from '../models';
 import { ProductsService } from '../products.service';
+import { StockMovementDialog } from '../../stock/components/stock-movement-dialog';
+import { MovementResponse } from '../../stock/models';
 
 /** Alta y edición en el mismo componente: el modo lo decide `:id` en la ruta. */
 @Component({
   selector: 'app-product-form-page',
-  imports: [ReactiveFormsModule, RouterLink, LucideAngularModule, NeuButton, NeuCard, NeuInput, NeuSelect, PageHeader],
+  imports: [ReactiveFormsModule, RouterLink, LucideAngularModule, NeuButton, NeuCard, NeuInput, NeuSelect, PageHeader, StockMovementDialog],
   template: `
     <page-header [title]="isEdit() ? 'Editar producto' : 'Nuevo producto'">
       <neu-button routerLink="/productos">
@@ -77,9 +79,15 @@ import { ProductsService } from '../products.service';
               <neu-input label="Stock mínimo" type="number" min="0" formControlName="minStock" [error]="errors.minStock()" />
             </div>
             @if (isEdit() && product(); as p) {
-              <p class="text-sm text-neuMuted mt-4">
-                Stock actual: <span class="font-semibold text-neuText">{{ p.currentStock }}</span>. Se modifica con movimientos de stock, no desde acá.
-              </p>
+              <div class="flex flex-wrap items-center justify-between gap-3 mt-4">
+                <p class="text-sm text-neuMuted">
+                  Stock actual: <span class="font-semibold text-neuText">{{ p.currentStock }}</span>. Se modifica con movimientos, no desde acá.
+                </p>
+                <neu-button (pressed)="stockOpen.set(true)">
+                  <lucide-icon name="package-plus" class="w-4 h-4" />
+                  Movimiento de stock
+                </neu-button>
+              </div>
             }
           </neu-card>
         </div>
@@ -106,6 +114,10 @@ import { ProductsService } from '../products.service';
           </neu-card>
         </div>
       </form>
+    }
+
+    @if (stockOpen() && product(); as p) {
+      <stock-movement-dialog [product]="p" (registered)="onMovement($event)" (closed)="stockOpen.set(false)" />
     }`,
 })
 export class ProductFormPage {
@@ -157,6 +169,7 @@ export class ProductFormPage {
   readonly savingBrand = signal(false);
 
   readonly product = signal<ProductResponse | null>(null);
+  readonly stockOpen = signal(false);
   readonly notFound = signal(false);
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
@@ -235,6 +248,10 @@ export class ProductFormPage {
         this.loading.set(false);
       },
     });
+  }
+
+  onMovement(m: MovementResponse): void {
+    this.product.update((p) => (p ? { ...p, currentStock: m.stockAfter, belowMinimum: m.stockAfter <= p.minStock } : p));
   }
 
   private fill(p: ProductResponse): void {

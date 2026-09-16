@@ -1,20 +1,22 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { NeuBadge, NeuCard } from '../../../shared/ui';
+import { LucideAngularModule } from 'lucide-angular';
+import { NeuBadge, NeuButton, NeuCard } from '../../../shared/ui';
 import { CONCENTRATION_LABELS, PRESENTATION_LABELS, ProductResponse } from '../models';
 
 @Component({
   selector: 'product-card',
-  imports: [CurrencyPipe, RouterLink, NeuCard, NeuBadge],
+  imports: [CurrencyPipe, RouterLink, LucideAngularModule, NeuCard, NeuBadge, NeuButton],
   template: `
-    <a [routerLink]="['/productos', product().id]" class="block h-full rounded-neu transition-all duration-150 hover:-translate-y-0.5"
-       [class.opacity-60]="!product().active">
-      <neu-card [compact]="true">
+    <neu-card [compact]="true">
+      <div class="flex flex-col h-full" [class.opacity-60]="!product().active">
         <div class="flex items-start justify-between gap-3">
           <div class="min-w-0">
             <p class="text-xs uppercase tracking-wide text-neuMuted truncate">{{ product().brand }}</p>
-            <h3 class="font-semibold leading-tight truncate" [title]="product().name">{{ product().name }}</h3>
+            <a [routerLink]="['/productos', product().id]" class="block font-semibold leading-tight truncate hover:text-accent transition-colors duration-150" [title]="product().name">
+              {{ product().name }}
+            </a>
             <p class="text-sm text-neuMuted mt-0.5">
               {{ labels.concentration[product().concentration] }} · {{ product().sizeMl }} ml ·
               {{ labels.presentation[product().presentation] }}
@@ -39,11 +41,23 @@ import { CONCENTRATION_LABELS, PRESENTATION_LABELS, ProductResponse } from '../m
             </p>
           </div>
         </div>
-        <p class="text-xs text-neuMuted mt-2 font-mono">{{ product().sku }}</p>
-      </neu-card>
-    </a>`,
+
+        <div class="flex items-center justify-between mt-3 pt-3 border-t border-neuLight/60">
+          <span class="text-xs text-neuMuted font-mono">{{ product().sku }}</span>
+          <div class="flex gap-2">
+            <neu-button variant="icon" [routerLink]="['/productos', product().id]" aria-label="Editar" title="Editar">
+              <lucide-icon name="pencil" class="w-4 h-4" />
+            </neu-button>
+            <neu-button variant="icon" (pressed)="stock.emit(product())" aria-label="Stock" title="Movimiento de stock">
+              <lucide-icon name="package-plus" class="w-4 h-4" />
+            </neu-button>
+          </div>
+        </div>
+      </div>
+    </neu-card>`,
 })
 export class ProductCard {
   product = input.required<ProductResponse>();
+  stock = output<ProductResponse>();
   readonly labels = { concentration: CONCENTRATION_LABELS, presentation: PRESENTATION_LABELS };
 }

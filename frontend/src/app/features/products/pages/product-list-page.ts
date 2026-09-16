@@ -8,6 +8,7 @@ import { Page, QueryParams } from '../../../core/base-crud.service';
 import { ApiError } from '../../../core/error.interceptor';
 import { NeuButton, NeuCard, NeuInput, NeuSelect, PageHeader } from '../../../shared/ui';
 import { ProductCard } from '../components/product-card';
+import { StockMovementDialog } from '../../stock/components/stock-movement-dialog';
 import { BrandsService } from '../brands.service';
 import { ProductResponse } from '../models';
 import { ProductsService } from '../products.service';
@@ -24,7 +25,7 @@ const EMPTY_PAGE: Page<ProductResponse> = { content: [], page: { size: 24, numbe
 
 @Component({
   selector: 'app-product-list-page',
-  imports: [RouterLink, ReactiveFormsModule, LucideAngularModule, NeuButton, NeuCard, NeuInput, NeuSelect, PageHeader, ProductCard],
+  imports: [RouterLink, ReactiveFormsModule, LucideAngularModule, NeuButton, NeuCard, NeuInput, NeuSelect, PageHeader, ProductCard, StockMovementDialog],
   template: `
     <page-header title="Productos">
       <neu-button variant="primary" routerLink="/productos/nuevo">
@@ -62,7 +63,7 @@ const EMPTY_PAGE: Page<ProductResponse> = { content: [], page: { size: 24, numbe
     } @else {
       <div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 transition-opacity" [class.opacity-50]="loading()">
         @for (p of page().content; track p.id) {
-          <product-card [product]="p" />
+          <product-card [product]="p" (stock)="stockFor.set(p)" />
         }
       </div>
 
@@ -77,6 +78,10 @@ const EMPTY_PAGE: Page<ProductResponse> = { content: [], page: { size: 24, numbe
           </neu-button>
         </div>
       }
+    }
+
+    @if (stockFor(); as p) {
+      <stock-movement-dialog [product]="p" (registered)="touched.set(true)" (closed)="closeStock()" />
     }`,
 })
 export class ProductListPage {
@@ -95,6 +100,10 @@ export class ProductListPage {
   });
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
+
+  /** Producto con el diálogo de stock abierto; `touched` fuerza el refetch al cerrarlo. */
+  readonly stockFor = signal<ProductResponse | null>(null);
+  readonly touched = signal(false);
 
   constructor() {
     this.qControl.valueChanges.pipe(takeUntilDestroyed()).subscribe((q) => this.setQ(q));
@@ -141,6 +150,13 @@ export class ProductListPage {
   }
   goTo(page: number): void {
     this.filters.update((f) => ({ ...f, page }));
+  }
+  closeStock(): void {
+    this.stockFor.set(null);
+    if (this.touched()) {
+      this.touched.set(false);
+      this.filters.update((f) => ({ ...f })); // objeto nuevo → vuelve a pedir la página
+    }
   }
 }
 

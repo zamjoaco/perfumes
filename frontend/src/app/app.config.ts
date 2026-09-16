@@ -14,6 +14,8 @@ import {
   LucideIconProvider,
   Moon,
   Package,
+  PackagePlus,
+  Pencil,
   Plus,
   ShoppingCart,
   Sun,
@@ -38,7 +40,7 @@ export const appConfig: ApplicationConfig = {
       multi: true,
       useValue: new LucideIconProvider({
         House, Package, ShoppingCart, Sun, Moon, KeyRound, LogOut,
-        Plus, ArrowLeft, ChevronLeft, ChevronRight, TriangleAlert,
+        Plus, ArrowLeft, ChevronLeft, ChevronRight, TriangleAlert, Pencil, PackagePlus,
       }),
     },
   ],

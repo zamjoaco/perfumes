@@ -4,3 +4,4 @@ export { NeuInput } from './neu-input';
 export { NeuBadge } from './neu-badge';
 export { PageHeader } from './page-header';
 export { NeuSelect, type SelectOption } from './neu-select';
+export { NeuModal } from './neu-modal';

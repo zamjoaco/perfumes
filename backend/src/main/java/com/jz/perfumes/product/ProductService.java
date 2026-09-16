@@ -78,6 +78,17 @@ public class ProductService {
         return ProductResponse.from(product);
     }
 
+    /** Para otros features (stock, ventas): se llama dentro de la transacción del que la usa. */
+    public Product require(Long id) {
+        return find(id);
+    }
+
+    /** Igual que require, pero con bloqueo de fila: para todo lo que modifica stock. */
+    public Product requireForUpdate(Long id) {
+        return products.lockById(id)
+                .orElseThrow(() -> new NotFoundException("Producto no encontrado"));
+    }
+
     private Product find(Long id) {
         return products.findWithBrandById(id)
                 .orElseThrow(() -> new NotFoundException("Producto no encontrado"));

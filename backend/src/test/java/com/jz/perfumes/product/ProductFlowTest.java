@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jz.perfumes.IntegrationTest;
+import com.jz.perfumes.stock.StockMovementRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ class ProductFlowTest extends IntegrationTest {
     @Autowired ObjectMapper json;
     @Autowired ProductRepository products;
     @Autowired BrandRepository brands;
+    @Autowired StockMovementRepository movements;
 
     private String token;
     private long diorId;
@@ -33,6 +35,7 @@ class ProductFlowTest extends IntegrationTest {
 
     @BeforeEach
     void setUp() throws Exception {
+        movements.deleteAll();
         products.deleteAll();
         brands.deleteAll();
         token = login();
