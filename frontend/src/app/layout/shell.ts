@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { IsActiveMatchOptions, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { AuthService } from '../core/auth.service';
 import { ThemeService } from '../core/theme.service';
@@ -18,8 +18,9 @@ import { NeuButton } from '../shared/ui';
         @for (item of nav; track item.path) {
           <a
             [routerLink]="item.path"
+            [queryParams]="item.query ?? null"
             routerLinkActive="shadow-neu-inset"
-            [routerLinkActiveOptions]="{ exact: item.path === '/' }"
+            [routerLinkActiveOptions]="activeOptions"
             class="flex items-center gap-3 h-11 px-4 rounded-neu transition-all duration-150 hover:shadow-neu-sm">
             <lucide-icon [name]="item.icon" class="w-5 h-5" />
             <span>{{ item.label }}</span>
@@ -53,8 +54,12 @@ export class Shell {
   readonly nav = [
     { path: '/', label: 'Inicio', icon: 'house' },
     { path: '/productos', label: 'Productos', icon: 'package' },
+    { path: '/productos', label: 'Stock bajo', icon: 'triangle-alert', query: { stockBajo: 1 } },
     { path: '/ventas', label: 'Ventas', icon: 'shopping-cart' },
-  ];
+  ] as { path: string; label: string; icon: string; query?: Record<string, number> }[];
+
+  /** Ruta y query exactos: "Productos" y "Stock bajo" comparten path y se distinguen por ?stockBajo. */
+  readonly activeOptions: IsActiveMatchOptions = { paths: 'exact', queryParams: 'exact', fragment: 'ignored', matrixParams: 'ignored' };
 
   logout(): void {
     this.auth.logout();

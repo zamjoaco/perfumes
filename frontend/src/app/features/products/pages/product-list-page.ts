@@ -90,11 +90,12 @@ export class ProductListPage {
 
   readonly qControl = new FormControl('', { nonNullable: true });
   readonly brandControl = new FormControl('', { nonNullable: true });
-  // ?stockBajo=1 llega desde la card de inicio.
+  private readonly route = inject(ActivatedRoute);
+  // ?stockBajo=1 llega desde la card de inicio y del menú; se sigue en constructor porque el componente se reutiliza.
   readonly filters = signal<Filters>({
     q: '',
     brandId: '',
-    belowMinimum: inject(ActivatedRoute).snapshot.queryParamMap.has('stockBajo'),
+    belowMinimum: this.route.snapshot.queryParamMap.has('stockBajo'),
     showInactive: false,
     page: 0,
   });
@@ -106,6 +107,10 @@ export class ProductListPage {
   readonly touched = signal(false);
 
   constructor() {
+    this.route.queryParamMap.pipe(takeUntilDestroyed()).subscribe((params) => {
+      const belowMinimum = params.has('stockBajo');
+      if (belowMinimum !== this.filters().belowMinimum) this.filters.update((f) => ({ ...f, belowMinimum, page: 0 }));
+    });
     this.qControl.valueChanges.pipe(takeUntilDestroyed()).subscribe((q) => this.setQ(q));
     this.brandControl.valueChanges.pipe(takeUntilDestroyed()).subscribe((b) => this.setBrand(b));
   }
