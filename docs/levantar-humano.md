@@ -1,4 +1,4 @@
-# Levantar Pefumes — guía para personas
+# Levantar Perfumes — guía para personas
 
 Para usar la app en casa o para desarrollarla. Todo pensado para Windows 11 con PowerShell.
 Si solo querés **usar** la app, con la primera parte alcanza.
@@ -16,8 +16,8 @@ Si solo querés **usar** la app, con la primera parte alcanza.
 
    ```
    cd $HOME
-   git clone <url-del-repo> Pefumes
-   cd Pefumes
+   git clone https://github.com/zamjoaco/perfumes.git
+   cd perfumes
    ```
 
 2. Crear el archivo de secretos:
@@ -53,7 +53,7 @@ línea "Dirección IPv4" del adaptador de wifi o ethernet (algo como `192.168.0.
 Si no carga, Windows está bloqueando el puerto. Una sola vez, en PowerShell **como administrador**:
 
 ```
-New-NetFirewallRule -DisplayName "Pefumes 8080" -Direction Inbound -Protocol TCP -LocalPort 8080 -Action Allow -Profile Any
+New-NetFirewallRule -DisplayName "Perfumes 8080" -Direction Inbound -Protocol TCP -LocalPort 8080 -Action Allow -Profile Any
 ```
 
 ### Día a día

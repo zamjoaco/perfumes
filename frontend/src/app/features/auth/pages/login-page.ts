@@ -25,7 +25,7 @@ import { NeuButton, NeuCard, NeuInput } from '../../../shared/ui';
         <neu-card>
           <div class="flex flex-col items-center gap-2 mb-6">
             <img src="logo.svg" alt="" class="w-14 h-14" />
-            <h1 class="text-2xl font-semibold">Pefumes</h1>
+            <h1 class="text-2xl font-semibold">Perfumes</h1>
             <p class="text-sm text-neuMuted">Ingresá para continuar</p>
           </div>
 

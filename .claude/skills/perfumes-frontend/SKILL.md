@@ -1,6 +1,6 @@
 ---
 name: perfumes-frontend
-description: "Reglas del frontend Angular del proyecto Pefumes (inventario y ventas de perfumes para una sola persona): standalone, signals, Reactive Forms tipados, Tailwind v4 con neumorfismo en modo claro y oscuro, íconos SVG con lucide. Usá esta skill SIEMPRE que se toque código de frontend/: componente, pantalla, servicio HTTP, interceptor, guard, ruta, formulario, estilo o test. Reemplaza a angular-generator en este repo. Se activa aunque el usuario diga solo 'hacé la pantalla', 'armá el formulario', 'el login', 'que se vea neumórfico', 'en oscuro no se lee'."
+description: "Reglas del frontend Angular del proyecto Perfumes (inventario y ventas de perfumes para una sola persona): standalone, signals, Reactive Forms tipados, Tailwind v4 con neumorfismo en modo claro y oscuro, íconos SVG con lucide. Usá esta skill SIEMPRE que se toque código de frontend/: componente, pantalla, servicio HTTP, interceptor, guard, ruta, formulario, estilo o test. Reemplaza a angular-generator en este repo. Se activa aunque el usuario diga solo 'hacé la pantalla', 'armá el formulario', 'el login', 'que se vea neumórfico', 'en oscuro no se lee'."
 ---
 
 # perfumes-frontend

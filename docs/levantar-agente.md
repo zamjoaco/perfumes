@@ -1,4 +1,4 @@
-# Levantar Pefumes — guía para agentes de IA
+# Levantar Perfumes — guía para agentes de IA
 
 Instrucciones deterministas para un agente que necesita la app corriendo (para probar un cambio, reproducir un bug
 o verificar en el navegador). Windows 11, PowerShell. Leé `CLAUDE.md` primero; las reglas de código están en

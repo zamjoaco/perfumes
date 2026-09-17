@@ -1,6 +1,6 @@
 ---
 name: perfumes-backend
-description: "Reglas del backend Spring Boot del proyecto Pefumes (inventario y ventas de perfumes para una sola persona): monolito plano por feature, JPA + Flyway + Postgres, JWT. Usá esta skill SIEMPRE que se toque código Java de backend/: entidad, repositorio, service, controller, migration, test, seguridad o config. Reemplaza a springboot-generator en este repo. Se activa aunque el usuario diga solo 'hacé el backend', 'agregá el endpoint', 'la venta no descuenta stock' o pegue un stacktrace."
+description: "Reglas del backend Spring Boot del proyecto Perfumes (inventario y ventas de perfumes para una sola persona): monolito plano por feature, JPA + Flyway + Postgres, JWT. Usá esta skill SIEMPRE que se toque código Java de backend/: entidad, repositorio, service, controller, migration, test, seguridad o config. Reemplaza a springboot-generator en este repo. Se activa aunque el usuario diga solo 'hacé el backend', 'agregá el endpoint', 'la venta no descuenta stock' o pegue un stacktrace."
 ---
 
 # perfumes-backend

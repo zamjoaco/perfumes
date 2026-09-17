@@ -13,7 +13,7 @@ import { NeuButton } from '../shared/ui';
       <aside class="w-60 shrink-0 p-4 flex flex-col gap-2">
         <a routerLink="/" class="flex items-center gap-3 px-3 py-4 mb-2">
           <img src="logo.svg" alt="" class="w-8 h-8" />
-          <span class="text-lg font-semibold">Pefumes</span>
+          <span class="text-lg font-semibold">Perfumes</span>
         </a>
         @for (item of nav; track item.path) {
           <a

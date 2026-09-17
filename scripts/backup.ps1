@@ -1,4 +1,4 @@
-# Backup de la base de Pefumes a .\backups\perfumes-AAAA-MM-DD_HHmm.sql
+# Backup de la base de Perfumes a .\backups\perfumes-AAAA-MM-DD_HHmm.sql
 # Uso: .\scripts\backup.ps1            (desde la raíz del repo, con la db corriendo)
 #
 # El dump se escribe DENTRO del contenedor y se copia con docker cp: redirigir con ">" en

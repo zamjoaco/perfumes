@@ -1,4 +1,4 @@
-# Pefumes
+# Perfumes
 
 Inventario y ventas de perfumes. Una sola persona, una PC en casa, un `docker compose up`.
 
@@ -20,7 +20,7 @@ Guía paso a paso desde cero en [docs/levantar-humano.md](docs/levantar-humano.m
 Si desde el celular no carga, Windows está bloqueando el puerto. Una vez, en PowerShell como administrador:
 
 ```
-New-NetFirewallRule -DisplayName "Pefumes 8080" -Direction Inbound -Protocol TCP -LocalPort 8080 -Action Allow -Profile Any
+New-NetFirewallRule -DisplayName "Perfumes 8080" -Direction Inbound -Protocol TCP -LocalPort 8080 -Action Allow -Profile Any
 ```
 
 **Respaldá el `.env` junto con los backups**: sin `DB_PASSWORD` no se puede abrir el volumen de la base.

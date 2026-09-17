@@ -1,4 +1,4 @@
-# Pefumes
+# Perfumes
 
 Inventario y ventas de perfumes para una sola persona, en su casa. Spring Boot 3.5 + Angular 21 + Postgres 16, en Docker Compose.
 

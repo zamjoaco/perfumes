@@ -30,7 +30,7 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
           </div>
           <div>
             <p class="font-semibold">{{ auth.username() }}</p>
-            <p class="text-sm text-neuMuted">Cambiá la contraseña con la que entrás a Pefumes.</p>
+            <p class="text-sm text-neuMuted">Cambiá la contraseña con la que entrás a Perfumes.</p>
           </div>
         </div>
         <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
