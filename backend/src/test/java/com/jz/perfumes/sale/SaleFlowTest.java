@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jz.perfumes.IntegrationTest;
 import com.jz.perfumes.product.BrandRepository;
 import com.jz.perfumes.product.ProductRepository;
+import com.jz.perfumes.shared.AppTimeZone;
 import com.jz.perfumes.stock.MovementType;
 import com.jz.perfumes.stock.StockMovementRepository;
 import java.time.LocalDate;
@@ -142,8 +143,10 @@ class SaleFlowTest extends IntegrationTest {
         mvc.perform(authed(post("/api/sales")).content("""
                 {"items":[{"productId":%d,"quantity":1}],"paymentMethod":"CASH"}
                 """.formatted(sauvageId))).andExpect(status().isCreated());
+        // fechas en la zona de la app: la del runner de CI es UTC y cambia de día a las 21 hs de Argentina
+        LocalDate today = LocalDate.now(AppTimeZone.ZONE);
         // una venta con fecha explícita de ayer
-        String yesterday = LocalDate.now().minusDays(1) + "T15:00:00Z";
+        String yesterday = today.minusDays(1) + "T15:00:00Z";
         mvc.perform(authed(post("/api/sales")).content("""
                 {"items":[{"productId":%d,"quantity":1}],"paymentMethod":"CARD","soldAt":"%s"}
                 """.formatted(sauvageId, yesterday))).andExpect(status().isCreated());
@@ -152,8 +155,7 @@ class SaleFlowTest extends IntegrationTest {
                 .andExpect(jsonPath("$.page.totalElements").value(2))
                 .andExpect(jsonPath("$.content[0].paymentMethod").value("CASH")); // más nueva primero
 
-        String today = LocalDate.now().toString();
-        mvc.perform(authed(get("/api/sales").param("from", today).param("to", today)))
+        mvc.perform(authed(get("/api/sales").param("from", today.toString()).param("to", today.toString())))
                 .andExpect(jsonPath("$.page.totalElements").value(1));
         mvc.perform(authed(get("/api/sales").param("status", "CANCELLED")))
                 .andExpect(jsonPath("$.page.totalElements").value(0));
