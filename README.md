@@ -1,6 +1,22 @@
 # Perfumes
 
-Inventario y ventas de perfumes. Una sola persona, una PC en casa, un `docker compose up`.
+Inventario y ventas de perfumes para uso personal. Una sola persona, una PC en casa, un `docker compose up`.
+
+[![CI](https://github.com/zamjoaco/perfumes/actions/workflows/ci.yml/badge.svg)](https://github.com/zamjoaco/perfumes/actions/workflows/ci.yml)
+![Java 21](https://img.shields.io/badge/Java-21-ED8B00?logo=openjdk&logoColor=white)
+![Spring Boot 3.5](https://img.shields.io/badge/Spring_Boot-3.5-6DB33F?logo=springboot&logoColor=white)
+![Angular 21](https://img.shields.io/badge/Angular-21-DD0031?logo=angular&logoColor=white)
+![PostgreSQL 16](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)
+![Tailwind CSS 4](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
+[![Licencia MIT](https://img.shields.io/badge/Licencia-MIT-yellow)](LICENSE)
+
+## Capturas
+
+| Claro | Oscuro |
+|---|---|
+| ![Inicio, modo claro](docs/img/home-light.png) | ![Inicio, modo oscuro](docs/img/home-dark.png) |
+| ![Nueva venta, modo claro](docs/img/sale-light.png) | ![Nueva venta, modo oscuro](docs/img/sale-dark.png) |
 
 ## Stack
 
@@ -85,3 +101,7 @@ local: `docker compose stop app`.
 | Frontend | Neumorfismo con modo claro/oscuro. Íconos y logo solo SVG. Un botón de acento por pantalla. |
 | Tests | Solo donde hay plata o stock: dominio puro + flujo completo contra Postgres real. |
 | Alcance | MVP hecho: productos con stock → venta → alerta de stock bajo. CSV, clientes, proveedores y dashboard después, si el uso lo pide. |
+
+## Licencia
+
+MIT, ver [LICENSE](LICENSE).
