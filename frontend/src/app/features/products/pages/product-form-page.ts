@@ -114,8 +114,8 @@ import { MovementResponse } from '../../stock/models';
 
     @if (newBrandOpen()) {
       <neu-modal title="Nueva marca" maxWidth="24rem" (closed)="closeNewBrand()">
-        <form (ngSubmit)="addBrand()" class="flex flex-col gap-4">
-          <neu-input label="Nombre" [formControl]="newBrandName" placeholder="Ej: Carolina Herrera" [error]="newBrandError()" />
+        <form [formGroup]="newBrandForm" (ngSubmit)="addBrand()" class="flex flex-col gap-4">
+          <neu-input label="Nombre" formControlName="name" placeholder="Ej: Carolina Herrera" [error]="newBrandError()" />
           <div class="flex justify-end gap-3">
             <neu-button (pressed)="closeNewBrand()">Cancelar</neu-button>
             <neu-button variant="primary" type="submit" [disabled]="savingBrand()">{{ savingBrand() ? 'Guardando…' : 'Agregar' }}</neu-button>
@@ -174,7 +174,7 @@ export class ProductFormPage {
   readonly brandOptions = computed(() => this.brandList().map((b) => ({ value: String(b.id), label: b.name })));
 
   readonly newBrandOpen = signal(false);
-  readonly newBrandName = this.fb.control('', [Validators.required, Validators.maxLength(80)]);
+  readonly newBrandForm = this.fb.group({ name: ['', [Validators.required, Validators.maxLength(80)]] });
   readonly newBrandError = signal<string | null>(null);
   readonly savingBrand = signal(false);
 
@@ -211,14 +211,14 @@ export class ProductFormPage {
   }
 
   addBrand(): void {
-    this.newBrandName.markAsTouched();
+    this.newBrandForm.controls.name.markAsTouched();
     this.newBrandError.set(null);
-    if (this.newBrandName.invalid || this.savingBrand()) {
+    if (this.newBrandForm.controls.name.invalid || this.savingBrand()) {
       this.newBrandError.set('Ingresá el nombre de la marca');
       return;
     }
     this.savingBrand.set(true);
-    this.brands.create({ name: this.newBrandName.value.trim() }).subscribe({
+    this.brands.create({ name: this.newBrandForm.controls.name.value.trim() }).subscribe({
       next: (b) => {
         this.brandList.update((list) => [...list, b].sort((x, y) => x.name.localeCompare(y.name)));
         this.form.controls.brandId.setValue(String(b.id));
@@ -234,7 +234,7 @@ export class ProductFormPage {
 
   closeNewBrand(): void {
     this.newBrandOpen.set(false);
-    this.newBrandName.reset();
+    this.newBrandForm.controls.name.reset();
     this.newBrandError.set(null);
   }
 
